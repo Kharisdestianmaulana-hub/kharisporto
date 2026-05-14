@@ -18,6 +18,8 @@ export const storage = new Storage(client);
 
 export const DATABASE_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID;
 export const PROJECTS_COLLECTION_ID = import.meta.env.VITE_PROJECTS_COLLECTION_ID;
+export const COLLECTION_CV_EXPORTS_ID =
+  import.meta.env.VITE_APPWRITE_CV_EXPORTS_COLLECTION_ID || 'cv_exports';
 export const PROJECT_IMAGES_BUCKET_ID =
   import.meta.env.VITE_PROJECT_IMAGES_BUCKET_ID ||
   import.meta.env.VITE_APPWRITE_PROJECT_IMAGES_BUCKET_ID ||

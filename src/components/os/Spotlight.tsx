@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useWindowStore } from '../../store/useWindowStore';
 import type { AppId } from '../../store/useWindowStore';
-import { Search, Folder, User, Terminal, ShoppingBag, Globe, Settings as SettingsIcon, Briefcase, GitCommit, Mail, Image } from 'lucide-react';
+import { Search, Folder, User, Terminal, ShoppingBag, Globe, Settings as SettingsIcon, Briefcase, GitCommit, Mail, Image, FileText } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 interface SearchResult {
@@ -20,6 +20,7 @@ const apps: SearchResult[] = [
   { id: 'experience', name: 'Experience', icon: <Briefcase size={20} className="text-white" />, color: 'bg-orange-500' },
   { id: 'changelogs', name: 'Changelogs', icon: <GitCommit size={20} className="text-white" />, color: 'bg-purple-600' },
   { id: 'gallery', name: 'Gallery', icon: <Image size={20} className="text-white" />, color: 'bg-fuchsia-500' },
+  { id: 'cv-download', name: 'Download CV', icon: <FileText size={20} className="text-white" />, color: 'bg-sky-500' },
   { id: 'contacts', name: 'Contacts', icon: <Mail size={20} className="text-white" />, color: 'bg-cyan-500' },
   { id: 'browser', name: 'Browser', icon: <Globe size={20} className="text-white" />, color: 'bg-rose-500' },
   { id: 'settings', name: 'Settings', icon: <SettingsIcon size={20} className="text-white" />, color: 'bg-slate-500' },
@@ -126,10 +127,11 @@ export const Spotlight: React.FC = () => {
                     onMouseEnter={() => setSelectedIndex(index)}
                     className={cn(
                       "flex items-center px-4 py-3 mx-2 rounded-xl cursor-pointer transition-colors",
-                      selectedIndex === index 
-                        ? "bg-blue-500 text-white" 
+                      selectedIndex === index
+                        ? "text-white"
                         : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                     )}
+                    style={selectedIndex === index ? { backgroundColor: 'var(--shift-accent)' } : undefined}
                   >
                     <div className={cn(
                       "w-8 h-8 rounded-lg flex items-center justify-center mr-4 shadow-sm", 

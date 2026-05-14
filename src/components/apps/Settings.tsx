@@ -44,11 +44,18 @@ export const Settings: React.FC = () => {
     resetBootScreen,
   } = useWindowStore();
   const [bootReset, setBootReset] = useState(false);
+  const [guideReset, setGuideReset] = useState(false);
 
   const handleResetBoot = () => {
     resetBootScreen();
     setBootReset(true);
     window.setTimeout(() => setBootReset(false), 1600);
+  };
+
+  const handleResetGuide = () => {
+    localStorage.removeItem('shiftos_onboarding_complete');
+    setGuideReset(true);
+    window.setTimeout(() => setGuideReset(false), 1600);
   };
 
   return (
@@ -58,8 +65,8 @@ export const Settings: React.FC = () => {
           <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4 px-2">
             Settings
           </div>
-          <button className="w-full flex items-center space-x-3 px-3 py-2 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-lg transition-colors">
-            <Monitor size={18} />
+          <button className="w-full flex items-center space-x-3 px-3 py-2 accent-soft-bg accent-text rounded-lg transition-colors">
+            <Monitor size={18} style={{ color: 'var(--shift-accent)' }} />
             <span className="font-medium">Appearance</span>
           </button>
         </div>
@@ -85,9 +92,10 @@ export const Settings: React.FC = () => {
                         className={cn(
                           'flex items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-bold transition-colors',
                           theme === mode
-                            ? 'border-blue-500 bg-blue-500 text-white'
+                            ? 'text-white'
                             : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200'
                         )}
+                        style={theme === mode ? { backgroundColor: 'var(--shift-accent)', borderColor: 'var(--shift-accent)' } : undefined}
                       >
                         {mode === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
                         {mode === 'dark' ? 'Dark' : 'Light'}
@@ -106,8 +114,9 @@ export const Settings: React.FC = () => {
                         className={cn(
                           'h-10 w-10 rounded-full border-4 transition-transform',
                           option.className,
-                          accentColor === option.id ? 'border-slate-900 dark:border-white scale-110' : 'border-white/80 dark:border-slate-700'
+                          accentColor === option.id ? 'scale-110 ring-2 ring-offset-2 ring-offset-white dark:ring-offset-slate-900' : 'border-white/80 dark:border-slate-700'
                         )}
+                        style={accentColor === option.id ? { borderColor: 'white', '--tw-ring-color': 'var(--shift-accent)' } as React.CSSProperties : undefined}
                         title={option.label}
                       />
                     ))}
@@ -124,9 +133,10 @@ export const Settings: React.FC = () => {
                         className={cn(
                           'rounded-xl border px-4 py-2 text-sm font-bold transition-colors',
                           dockSize === option.id
-                            ? 'border-blue-500 bg-blue-500 text-white'
+                            ? 'text-white'
                             : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200'
                         )}
+                        style={dockSize === option.id ? { backgroundColor: 'var(--shift-accent)', borderColor: 'var(--shift-accent)' } : undefined}
                       >
                         {option.label}
                       </button>
@@ -143,7 +153,7 @@ export const Settings: React.FC = () => {
                       <span className="block text-sm font-bold text-slate-800 dark:text-white">Reduce Motion</span>
                       <span className="text-xs text-slate-500 dark:text-slate-400">Minimize animations and transitions.</span>
                     </span>
-                    <ToggleLeft size={28} className={reduceMotion ? 'text-blue-500 rotate-180' : 'text-slate-400'} />
+                    <ToggleLeft size={28} className={reduceMotion ? 'rotate-180' : 'text-slate-400'} style={reduceMotion ? { color: 'var(--shift-accent)' } : undefined} />
                   </button>
 
                   <button
@@ -153,6 +163,17 @@ export const Settings: React.FC = () => {
                     <span>
                       <span className="block text-sm font-bold text-slate-800 dark:text-white">Reset Boot Screen</span>
                       <span className="text-xs text-slate-500 dark:text-slate-400">{bootReset ? 'Boot screen will show on next reload.' : 'Show Shift OS boot again next session reload.'}</span>
+                    </span>
+                    <RotateCcw size={20} className="text-slate-500" />
+                  </button>
+
+                  <button
+                    onClick={handleResetGuide}
+                    className="w-full flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-3 text-left hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                  >
+                    <span>
+                      <span className="block text-sm font-bold text-slate-800 dark:text-white">Reset Guide</span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400">{guideReset ? 'Guide will show on next reload.' : 'Show the first-visit guide again.'}</span>
                     </span>
                     <RotateCcw size={20} className="text-slate-500" />
                   </button>
@@ -171,13 +192,14 @@ export const Settings: React.FC = () => {
                   <button
                     key={wp.id}
                     onClick={() => setWallpaper(wp.url)}
-                    className={cn(
-                      "relative group rounded-xl overflow-hidden aspect-video border-2 transition-all",
-                      wallpaper === wp.url
-                        ? "border-blue-500 scale-[1.02] shadow-lg shadow-blue-500/20"
+                      className={cn(
+                        "relative group rounded-xl overflow-hidden aspect-video border-2 transition-all",
+                        wallpaper === wp.url
+                        ? "scale-[1.02] shadow-lg"
                         : "border-transparent hover:border-slate-300 dark:hover:border-slate-700"
-                    )}
-                  >
+                      )}
+                      style={wallpaper === wp.url ? { borderColor: 'var(--shift-accent)', boxShadow: '0 10px 24px color-mix(in srgb, var(--shift-accent) 24%, transparent)' } : undefined}
+                    >
                     <img
                       src={wp.url}
                       alt={wp.name}
@@ -187,7 +209,7 @@ export const Settings: React.FC = () => {
                       }}
                     />
                     {wallpaper === wp.url && (
-                      <div className="absolute inset-0 border-4 border-blue-500 rounded-xl pointer-events-none" />
+                      <div className="absolute inset-0 border-4 rounded-xl pointer-events-none" style={{ borderColor: 'var(--shift-accent)' }} />
                     )}
                     <div className="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                       <span className="text-white text-xs font-medium">{wp.name}</span>

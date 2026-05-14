@@ -83,7 +83,7 @@ export const Browser: React.FC = () => {
               type="text" 
               value={inputUrl}
               onChange={(e) => setInputUrl(e.target.value)}
-              className="w-full pl-9 pr-4 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-full text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
+              className="w-full pl-9 pr-4 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-full text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 accent-ring transition-shadow"
             />
           </div>
         </form>
@@ -93,7 +93,7 @@ export const Browser: React.FC = () => {
       <div className="flex-1 overflow-y-auto scrollbar-hide relative bg-white dark:bg-slate-900">
         {loading ? (
           <div className="absolute inset-0 flex justify-center items-center">
-            <Loader2 className="animate-spin text-blue-500 w-8 h-8" />
+            <Loader2 className="animate-spin accent-text w-8 h-8" />
           </div>
         ) : !currentArticle ? (
           /* List View (Articles Hub) */
@@ -140,7 +140,7 @@ export const Browser: React.FC = () => {
                     
                     {/* Card Content */}
                     <div className="p-5 flex-1 flex flex-col">
-                      <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-3 line-clamp-2 group-hover:text-blue-500 transition-colors">
+                      <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-3 line-clamp-2 group-hover:accent-text transition-colors">
                         {article.title}
                       </h2>
                       
@@ -165,7 +165,7 @@ export const Browser: React.FC = () => {
             <div className="mb-8">
               <div className="flex flex-wrap items-center gap-3 mb-6">
                 {currentArticle.target_website && (
-                  <span className="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-semibold px-3 py-1 rounded-full text-sm flex items-center">
+                  <span className="accent-soft-bg accent-text font-semibold px-3 py-1 rounded-full text-sm flex items-center">
                     <ExternalLink size={14} className="mr-1.5" />
                     Published on {currentArticle.target_website}
                   </span>

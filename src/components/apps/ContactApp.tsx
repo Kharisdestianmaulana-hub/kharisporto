@@ -180,7 +180,7 @@ export const ContactApp: React.FC = () => {
               {bio?.avatar_url ? (
                 <img src={bio.avatar_url} alt={bio.name} className="h-16 w-16 rounded-2xl object-cover border border-slate-200 dark:border-slate-700" />
               ) : (
-                <div className="h-16 w-16 rounded-2xl bg-blue-500 text-white flex items-center justify-center">
+                <div className="h-16 w-16 rounded-2xl accent-bg text-white flex items-center justify-center">
                   <UserRound size={30} />
                 </div>
               )}
@@ -190,8 +190,8 @@ export const ContactApp: React.FC = () => {
               </div>
             </div>
 
-            <div className="mt-8 rounded-2xl border border-blue-200 dark:border-blue-900/60 bg-blue-50 dark:bg-blue-950/30 p-4">
-              <p className="text-xs font-bold uppercase tracking-widest text-blue-500 mb-2">Mail Client</p>
+            <div className="mt-8 rounded-2xl border accent-border accent-soft-bg p-4">
+              <p className="text-xs font-bold uppercase tracking-widest accent-text mb-2">Mail Client</p>
               <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                 Select a contact method, then send a message or open the linked profile.
               </p>
@@ -202,7 +202,7 @@ export const ContactApp: React.FC = () => {
             {draft ? (
               <form onSubmit={sendMail} className="mx-auto max-w-2xl">
                 <div className="mb-6">
-                  <p className="text-xs font-bold uppercase tracking-widest text-blue-500 mb-2">New Message</p>
+                  <p className="text-xs font-bold uppercase tracking-widest accent-text mb-2">New Message</p>
                   <h1 className="text-3xl font-black">Compose Email</h1>
                 </div>
 
@@ -238,7 +238,7 @@ export const ContactApp: React.FC = () => {
                   </button>
                   <button
                     type="submit"
-                    className="inline-flex items-center gap-2 rounded-xl bg-blue-500 px-5 py-2 text-sm font-bold text-white hover:bg-blue-600 transition-colors"
+                    className="inline-flex items-center gap-2 rounded-xl accent-bg px-5 py-2 text-sm font-bold text-white transition-opacity hover:opacity-90"
                   >
                     <Send size={16} />
                     Send with Email App
@@ -248,7 +248,7 @@ export const ContactApp: React.FC = () => {
             ) : (
               <div className="mx-auto max-w-4xl">
                 <div className="mb-8">
-                  <p className="text-xs font-bold uppercase tracking-widest text-blue-500 mb-2">Address Book</p>
+                  <p className="text-xs font-bold uppercase tracking-widest accent-text mb-2">Address Book</p>
                   <h1 className="text-3xl font-black">Contacts</h1>
                 </div>
 

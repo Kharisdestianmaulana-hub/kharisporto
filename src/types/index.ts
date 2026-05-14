@@ -105,3 +105,15 @@ export interface Roadmap {
   tasks: string[];
   $createdAt: string;
 }
+
+export interface CVExport {
+  $id: string;
+  title?: string;
+  template?: string;
+  region?: string;
+  file_id?: string;
+  file_name?: string;
+  is_active?: boolean;
+  $createdAt?: string;
+  $updatedAt?: string;
+}

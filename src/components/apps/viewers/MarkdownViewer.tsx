@@ -93,7 +93,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({ title, content }
     <div className="h-full overflow-y-auto bg-white p-8 text-slate-800 dark:bg-slate-950 dark:text-slate-200">
       <article className="mx-auto max-w-3xl">
         <div className="mb-8 border-b border-slate-200 pb-5 dark:border-slate-800">
-          <p className="mb-2 text-xs font-bold uppercase tracking-widest text-blue-500">Markdown Preview</p>
+          <p className="mb-2 text-xs font-bold uppercase tracking-widest accent-text">Markdown Preview</p>
           <h1 className="text-3xl font-black tracking-tight">{title}</h1>
         </div>
 

@@ -1,18 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { BootScreen } from './components/os/BootScreen';
 import { TopBar } from './components/os/TopBar';
 import { FloatingDock } from './components/os/FloatingDock';
 import { WindowContainer } from './components/os/WindowContainer';
 import { Spotlight } from './components/os/Spotlight';
 import { RoadmapWidget } from './components/os/RoadmapWidget';
+import { OnboardingGuide } from './components/os/OnboardingGuide';
 import { useWindowStore } from './store/useWindowStore';
 import { AnimatePresence } from 'framer-motion';
+
+const ABOUT_AUTO_OPENED_KEY = 'shiftos_about_auto_opened';
 
 function App() {
   const [hasBooted, setHasBooted] = useState(() => {
     return sessionStorage.getItem('hasBooted') === 'true';
   });
-  const { wallpaper, theme, accentColor, reduceMotion } = useWindowStore();
+  const { wallpaper, theme, accentColor, reduceMotion, openWindow } = useWindowStore();
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
@@ -24,6 +27,25 @@ function App() {
     setHasBooted(true);
     sessionStorage.setItem('hasBooted', 'true');
   };
+
+  const openAboutMe = useCallback(() => {
+    openWindow('system-info', 'About PC');
+  }, [openWindow]);
+
+  const autoOpenAboutMe = useCallback(() => {
+    if (sessionStorage.getItem(ABOUT_AUTO_OPENED_KEY) === 'true') return;
+    sessionStorage.setItem(ABOUT_AUTO_OPENED_KEY, 'true');
+    openAboutMe();
+  }, [openAboutMe]);
+
+  useEffect(() => {
+    if (!hasBooted) return;
+    if (localStorage.getItem('shiftos_onboarding_complete') !== 'true') return;
+    if (sessionStorage.getItem(ABOUT_AUTO_OPENED_KEY) === 'true') return;
+
+    const timer = window.setTimeout(autoOpenAboutMe, 500);
+    return () => window.clearTimeout(timer);
+  }, [hasBooted, autoOpenAboutMe]);
 
   return (
     <div 
@@ -45,6 +67,7 @@ function App() {
           <FloatingDock />
           <Spotlight />
           <RoadmapWidget />
+          <OnboardingGuide onComplete={autoOpenAboutMe} />
         </>
       )}
     </div>

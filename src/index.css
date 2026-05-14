@@ -62,6 +62,30 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  .accent-bg {
+    background-color: var(--shift-accent);
+  }
+
+  .accent-text {
+    color: var(--shift-accent);
+  }
+
+  .accent-border {
+    border-color: var(--shift-accent);
+  }
+
+  .accent-ring:focus {
+    --tw-ring-color: color-mix(in srgb, var(--shift-accent) 50%, transparent);
+  }
+
+  .accent-soft-bg {
+    background-color: color-mix(in srgb, var(--shift-accent) 12%, transparent);
+  }
+
+  .group:hover .group-hover\:accent-text {
+    color: var(--shift-accent);
+  }
 }
 
 /* Custom scrollbar for apps */

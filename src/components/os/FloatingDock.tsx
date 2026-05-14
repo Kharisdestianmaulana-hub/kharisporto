@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useWindowStore } from '../../store/useWindowStore';
 import type { AppId } from '../../store/useWindowStore';
-import { User, Folder, Terminal, ShoppingBag, Globe, Settings as SettingsIcon, Briefcase, GitCommit, Mail, Image } from 'lucide-react';
+import { User, Folder, Terminal, ShoppingBag, Globe, Settings as SettingsIcon, Briefcase, GitCommit, Mail, Image, FileText } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 const apps: { id: AppId; name: string; icon: React.ReactNode; color: string }[] = [
@@ -13,6 +13,7 @@ const apps: { id: AppId; name: string; icon: React.ReactNode; color: string }[] 
   { id: 'experience', name: 'Experience', icon: <Briefcase size={24} className="text-white" />, color: 'bg-orange-500' },
   { id: 'changelogs', name: 'Changelogs', icon: <GitCommit size={24} className="text-white" />, color: 'bg-purple-600' },
   { id: 'gallery', name: 'Gallery', icon: <Image size={24} className="text-white" />, color: 'bg-fuchsia-500' },
+  { id: 'cv-download', name: 'Download CV', icon: <FileText size={24} className="text-white" />, color: 'bg-sky-500' },
   { id: 'contacts', name: 'Contacts', icon: <Mail size={24} className="text-white" />, color: 'bg-cyan-500' },
   { id: 'browser', name: 'Browser', icon: <Globe size={24} className="text-white" />, color: 'bg-rose-500' },
   { id: 'settings', name: 'Settings', icon: <SettingsIcon size={24} className="text-white" />, color: 'bg-slate-500' },
@@ -43,6 +44,8 @@ export const FloatingDock: React.FC = () => {
                 whileHover={{ scale: 1.15, y: -10 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => openWindow(app.id, app.name)}
+                data-guide-id={`dock-${app.id}`}
+                aria-label={app.name}
                 className={cn(
                   "rounded-xl flex items-center justify-center shadow-lg transition-all duration-200",
                   iconSizeClass,

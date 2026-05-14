@@ -114,9 +114,9 @@ export const RIFiles: React.FC = () => {
           <div className="h-4 w-px bg-slate-300 dark:bg-slate-700 mx-2"></div>
           <div className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center min-w-0">
             {selectedProject ? (
-              <FolderOpen size={16} className="text-blue-500 mr-2 shrink-0" fill="currentColor" />
+              <FolderOpen size={16} className="accent-text mr-2 shrink-0" fill="currentColor" />
             ) : (
-              <Folder size={16} className="text-blue-500 mr-2 shrink-0" fill="currentColor" />
+              <Folder size={16} className="accent-text mr-2 shrink-0" fill="currentColor" />
             )}
             <span className="truncate">
               Projects{selectedProject ? ` / ${selectedProject.title}` : ''}{viewer ? ` / ${viewer.title}` : ''}
@@ -133,7 +133,7 @@ export const RIFiles: React.FC = () => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               disabled={!!viewer}
-              className="pl-9 pr-3 py-1.5 bg-white/70 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 rounded-lg text-sm w-48 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all placeholder:text-slate-400"
+              className="pl-9 pr-3 py-1.5 bg-white/70 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 rounded-lg text-sm w-48 focus:outline-none focus:ring-2 accent-ring transition-all placeholder:text-slate-400"
             />
           </div>
         </div>
@@ -152,8 +152,8 @@ export const RIFiles: React.FC = () => {
                     onClick={() => setFilter(cat)}
                     className={cn(
                       "w-full flex items-center space-x-2 px-2 py-1.5 rounded-lg text-sm transition-colors",
-                      filter === cat 
-                        ? "bg-blue-500 text-white shadow-sm" 
+                      filter === cat
+                        ? "accent-bg text-white shadow-sm"
                         : "text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800"
                     )}
                   >
@@ -172,7 +172,7 @@ export const RIFiles: React.FC = () => {
               </div>
               <div>
                 <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Status</div>
-                <div className="inline-flex rounded-full bg-blue-500/10 px-2.5 py-1 text-xs font-semibold text-blue-600 dark:text-blue-400">
+                <div className="inline-flex rounded-full accent-soft-bg px-2.5 py-1 text-xs font-semibold accent-text">
                   {selectedProject.status}
                 </div>
               </div>
@@ -221,10 +221,10 @@ export const RIFiles: React.FC = () => {
                       ) : (
                         <FileText className="w-14 h-14 text-slate-500 dark:text-slate-400" />
                       )}
-                      {file.type === 'image' && <FileImage size={16} className="absolute -bottom-1 -right-1 text-blue-500 bg-white dark:bg-slate-900 rounded" />}
+                      {file.type === 'image' && <FileImage size={16} className="absolute -bottom-1 -right-1 accent-text bg-white dark:bg-slate-900 rounded" />}
                     </div>
                     <div className="text-center w-full">
-                      <div className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                      <div className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate group-hover:accent-text transition-colors">
                         {file.name}
                       </div>
                       <div className="text-xs text-slate-500 dark:text-slate-500 truncate mt-0.5">
@@ -249,7 +249,7 @@ export const RIFiles: React.FC = () => {
                   onClick={() => openProject(project)}
                 >
                   <div className="relative w-16 h-16 mb-3">
-                    <Folder className="w-full h-full text-blue-400 dark:text-blue-500" fill="currentColor" />
+                    <Folder className="w-full h-full accent-text" fill="currentColor" />
                     {project.status === 'Completed' && (
                       <div className="absolute bottom-0 right-0 w-5 h-5 bg-emerald-500 rounded-full border-2 border-white dark:border-slate-900 flex items-center justify-center">
                         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
@@ -257,7 +257,7 @@ export const RIFiles: React.FC = () => {
                     )}
                   </div>
                   <div className="text-center w-full">
-                    <div className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    <div className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate group-hover:accent-text transition-colors">
                       {project.title}
                     </div>
                     <div className="text-xs text-slate-500 dark:text-slate-500 truncate mt-0.5">

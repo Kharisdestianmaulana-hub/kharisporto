@@ -1,6 +1,6 @@
 import { Query } from 'appwrite';
-import { databases, storage, DATABASE_ID, PROJECTS_COLLECTION_ID, PROJECT_IMAGES_BUCKET_ID } from './appwrite';
-import type { Bio, Project, TechStack, Service, SocialLink, Experience, Article, ChangelogEntry, Roadmap, GalleryItem } from '../types';
+import { databases, storage, DATABASE_ID, PROJECTS_COLLECTION_ID, PROJECT_IMAGES_BUCKET_ID, COLLECTION_CV_EXPORTS_ID } from './appwrite';
+import type { Bio, Project, TechStack, Service, SocialLink, Experience, Article, ChangelogEntry, Roadmap, GalleryItem, CVExport } from '../types';
 
 export interface ProjectImageAsset {
   id: string;
@@ -182,4 +182,23 @@ export const fetchActiveRoadmap = async (): Promise<Roadmap | null> => {
     console.error('Failed to fetch roadmap:', error);
     return null;
   }
+};
+
+export const fetchActiveCVExports = async (): Promise<CVExport[]> => {
+  try {
+    const response = await databases.listDocuments(DATABASE_ID, COLLECTION_CV_EXPORTS_ID, [
+      Query.equal('is_active', true),
+      Query.orderDesc('$createdAt'),
+      Query.limit(20)
+    ]);
+    return (response.documents as unknown) as CVExport[];
+  } catch (error) {
+    console.error('Failed to fetch CV exports:', error);
+    return [];
+  }
+};
+
+export const getCVDownloadUrl = (fileId?: string): string | null => {
+  if (!fileId || !PROJECT_IMAGES_BUCKET_ID) return null;
+  return storage.getFileDownload(PROJECT_IMAGES_BUCKET_ID, fileId).toString();
 };

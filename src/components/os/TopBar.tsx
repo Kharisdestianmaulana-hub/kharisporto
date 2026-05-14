@@ -64,16 +64,18 @@ export const TopBar: React.FC = () => {
     <div className="h-8 w-full topbar-glass fixed top-0 z-[100] flex items-center justify-between px-4 text-xs font-medium">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/70 dark:bg-white/20" />
       <div className="flex items-center space-x-4">
-        <span onClick={() => openWindow('os-info', 'About Shift OS', { width: 400, height: 500 })} className="font-bold text-sm tracking-wide cursor-pointer hover:opacity-80 transition-opacity">Shift OS</span>
-        <span onClick={() => openWindow('ri-files', 'RI-Files')} className="hidden sm:inline hover:bg-slate-200 dark:hover:bg-slate-700 px-2 py-1 rounded cursor-pointer transition-colors">File</span>
-        <span onClick={() => openWindow('terminal', 'Terminal')} className="hidden sm:inline hover:bg-slate-200 dark:hover:bg-slate-700 px-2 py-1 rounded cursor-pointer transition-colors">Edit</span>
-        <span onClick={() => openWindow('settings', 'Settings')} className="hidden sm:inline hover:bg-slate-200 dark:hover:bg-slate-700 px-2 py-1 rounded cursor-pointer transition-colors">View</span>
-        <span onClick={() => openWindow('system-info', 'About This PC')} className="hidden sm:inline hover:bg-slate-200 dark:hover:bg-slate-700 px-2 py-1 rounded cursor-pointer transition-colors">Help</span>
+        <span data-guide-id="topbar-logo" onClick={() => openWindow('os-info', 'About Shift OS', { width: 400, height: 500 })} className="font-bold text-sm tracking-wide cursor-pointer hover:opacity-80 transition-opacity">Shift OS</span>
+        <span data-guide-id="topbar-file" onClick={() => openWindow('ri-files', 'RI-Files')} className="hidden sm:inline hover:bg-slate-200 dark:hover:bg-slate-700 px-2 py-1 rounded cursor-pointer transition-colors">File</span>
+        <span data-guide-id="topbar-edit" onClick={() => openWindow('terminal', 'Terminal')} className="hidden sm:inline hover:bg-slate-200 dark:hover:bg-slate-700 px-2 py-1 rounded cursor-pointer transition-colors">Edit</span>
+        <span data-guide-id="topbar-view" onClick={() => openWindow('settings', 'Settings')} className="hidden sm:inline hover:bg-slate-200 dark:hover:bg-slate-700 px-2 py-1 rounded cursor-pointer transition-colors">View</span>
+        <span data-guide-id="topbar-help" onClick={() => openWindow('system-info', 'About This PC')} className="hidden sm:inline hover:bg-slate-200 dark:hover:bg-slate-700 px-2 py-1 rounded cursor-pointer transition-colors">Help</span>
       </div>
 
       <div className="flex items-center space-x-4">
         <button 
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          data-guide-id="topbar-theme"
+          aria-label="Toggle theme"
           className="hover:bg-slate-200 dark:hover:bg-slate-700 p-1 rounded transition-colors"
         >
           {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
@@ -83,11 +85,12 @@ export const TopBar: React.FC = () => {
           <span>{batteryLevel !== null ? `${batteryLevel}%` : '100%'}</span>
           {isCharging ? <BatteryCharging size={14} /> : <Battery size={14} />}
         </div>
-        <button onClick={toggleSpotlight} className="hover:bg-slate-200 dark:hover:bg-slate-700 p-1 rounded transition-colors">
+        <button onClick={toggleSpotlight} data-guide-id="topbar-search" aria-label="Open Spotlight" className="hover:bg-slate-200 dark:hover:bg-slate-700 p-1 rounded transition-colors">
           <Search size={14} />
         </button>
         <button
           onClick={() => setIsWidgetsOpen((open) => !open)}
+          data-guide-id="topbar-widgets"
           className="font-semibold whitespace-nowrap hover:bg-slate-200 dark:hover:bg-slate-700 px-2 py-1 rounded transition-colors"
         >
           {dateTimeLabel}

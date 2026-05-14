@@ -18,6 +18,7 @@ import { OSInfo } from '../apps/OSInfo';
 import { ChangelogsApp } from '../apps/ChangelogsApp';
 import { ContactApp } from '../apps/ContactApp';
 import { GalleryApp } from '../apps/GalleryApp';
+import { CVDownloadApp } from '../apps/CVDownloadApp';
 
 const DEFAULT_MIN_SIZE = { width: 520, height: 380 };
 
@@ -33,6 +34,7 @@ const appMinSizes: Partial<Record<AppId, { width: number; height: number }>> = {
   changelogs: { width: 700, height: 500 },
   contacts: { width: 680, height: 480 },
   gallery: { width: 720, height: 520 },
+  'cv-download': { width: 680, height: 500 },
 };
 
 export const WindowContainer: React.FC = () => {
@@ -51,6 +53,7 @@ export const WindowContainer: React.FC = () => {
       case 'changelogs': return <ChangelogsApp />;
       case 'contacts': return <ContactApp />;
       case 'gallery': return <GalleryApp />;
+      case 'cv-download': return <CVDownloadApp />;
       default: return <div className="flex items-center justify-center h-full text-slate-500">App not found</div>;
     }
   };

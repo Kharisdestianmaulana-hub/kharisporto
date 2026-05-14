@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type AppId = 'system-info' | 'ri-files' | 'terminal' | 'app-store' | 'browser' | 'settings' | 'experience' | 'os-info' | 'changelogs' | 'contacts' | 'gallery';
+export type AppId = 'system-info' | 'ri-files' | 'terminal' | 'app-store' | 'browser' | 'settings' | 'experience' | 'os-info' | 'changelogs' | 'contacts' | 'gallery' | 'cv-download';
 export type ThemeMode = 'dark' | 'light';
 export type AccentColor = 'blue' | 'emerald' | 'fuchsia' | 'orange' | 'rose';
 export type DockSize = 'compact' | 'comfortable' | 'large';
