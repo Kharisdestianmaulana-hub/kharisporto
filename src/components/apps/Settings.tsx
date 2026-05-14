@@ -54,6 +54,7 @@ export const Settings: React.FC = () => {
 
   const handleResetGuide = () => {
     localStorage.removeItem('shiftos_onboarding_complete');
+    window.dispatchEvent(new Event('shiftos:start-tour'));
     setGuideReset(true);
     window.setTimeout(() => setGuideReset(false), 1600);
   };
@@ -171,9 +172,9 @@ export const Settings: React.FC = () => {
                     onClick={handleResetGuide}
                     className="w-full flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-3 text-left hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                   >
-                    <span>
-                      <span className="block text-sm font-bold text-slate-800 dark:text-white">Reset Guide</span>
-                      <span className="text-xs text-slate-500 dark:text-slate-400">{guideReset ? 'Guide will show on next reload.' : 'Show the first-visit guide again.'}</span>
+                      <span>
+                      <span className="block text-sm font-bold text-slate-800 dark:text-white">Start Tour</span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400">{guideReset ? 'Tour started.' : 'Replay the portfolio onboarding guide.'}</span>
                     </span>
                     <RotateCcw size={20} className="text-slate-500" />
                   </button>

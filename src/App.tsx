@@ -6,6 +6,7 @@ import { WindowContainer } from './components/os/WindowContainer';
 import { Spotlight } from './components/os/Spotlight';
 import { RoadmapWidget } from './components/os/RoadmapWidget';
 import { OnboardingGuide } from './components/os/OnboardingGuide';
+import { DesktopWidgets } from './components/os/DesktopWidgets';
 import { useWindowStore } from './store/useWindowStore';
 import { AnimatePresence } from 'framer-motion';
 
@@ -66,6 +67,7 @@ function App() {
 
           <FloatingDock />
           <Spotlight />
+          <DesktopWidgets />
           <RoadmapWidget />
           <OnboardingGuide onComplete={autoOpenAboutMe} />
         </>

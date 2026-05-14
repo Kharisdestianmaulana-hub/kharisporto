@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { Battery, BatteryCharging, Wifi, Search, Moon, Sun } from 'lucide-react';
+import { Battery, BatteryCharging, Wifi, Search, Moon, Sun, PlayCircle } from 'lucide-react';
 import { useWindowStore } from '../../store/useWindowStore';
 import { WidgetsOverlay } from './WidgetsOverlay';
 
@@ -25,6 +25,10 @@ export const TopBar: React.FC = () => {
     day: '2-digit',
     month: 'short',
   }).replace(',', '')} ${time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+
+  const startTour = () => {
+    window.dispatchEvent(new Event('shiftos:start-tour'));
+  };
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -87,6 +91,14 @@ export const TopBar: React.FC = () => {
         </div>
         <button onClick={toggleSpotlight} data-guide-id="topbar-search" aria-label="Open Spotlight" className="hover:bg-slate-200 dark:hover:bg-slate-700 p-1 rounded transition-colors">
           <Search size={14} />
+        </button>
+        <button
+          onClick={startTour}
+          aria-label="Start portfolio tour"
+          className="hidden items-center gap-1 rounded px-2 py-1 font-semibold transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 sm:inline-flex"
+        >
+          <PlayCircle size={14} />
+          Tour
         </button>
         <button
           onClick={() => setIsWidgetsOpen((open) => !open)}

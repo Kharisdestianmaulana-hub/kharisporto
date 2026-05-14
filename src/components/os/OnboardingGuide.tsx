@@ -225,19 +225,32 @@ export const OnboardingGuide: React.FC<OnboardingGuideProps> = ({ onComplete }) 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [targetRect, setTargetRect] = useState<TargetRect | null>(null);
 
+  const startGuide = useCallback(() => {
+    const availableSteps = guideSteps.filter(step => getElementRect(step.targetId));
+    if (availableSteps.length > 0) {
+      setVisibleSteps(availableSteps);
+      setCurrentIndex(0);
+      setIsOpen(true);
+    }
+  }, []);
+
   useEffect(() => {
     if (localStorage.getItem(ONBOARDING_STORAGE_KEY) === 'true') return;
 
-    const timer = window.setTimeout(() => {
-      const availableSteps = guideSteps.filter(step => getElementRect(step.targetId));
-      if (availableSteps.length > 0) {
-        setVisibleSteps(availableSteps);
-        setIsOpen(true);
-      }
-    }, 650);
+    const timer = window.setTimeout(startGuide, 650);
 
     return () => window.clearTimeout(timer);
-  }, []);
+  }, [startGuide]);
+
+  useEffect(() => {
+    const handleStartTour = () => {
+      localStorage.removeItem(ONBOARDING_STORAGE_KEY);
+      window.setTimeout(startGuide, 80);
+    };
+
+    window.addEventListener('shiftos:start-tour', handleStartTour);
+    return () => window.removeEventListener('shiftos:start-tour', handleStartTour);
+  }, [startGuide]);
 
   const currentStep = visibleSteps[currentIndex];
 

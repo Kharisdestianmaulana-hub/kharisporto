@@ -1,22 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { fetchBio, fetchSocialLinks } from '../../lib/api';
-import type { Bio, SocialLink } from '../../types';
-import { Code, Briefcase, Camera, MessageSquare, Mail, Link as LinkIcon, Loader2 } from 'lucide-react';
+import { fetchBio, fetchProjects, fetchSkills, fetchSocialLinks, fetchTestimonials } from '../../lib/api';
+import type { Bio, Project, SocialLink, TechStack, Testimonial } from '../../types';
+import { Code, Briefcase, Camera, MessageSquare, Mail, Link as LinkIcon, Loader2, Quote, Layers3 } from 'lucide-react';
 
 export const SystemInfo: React.FC = () => {
   const [bio, setBio] = useState<Bio | null>(null);
   const [links, setLinks] = useState<SocialLink[]>([]);
+  const [skills, setSkills] = useState<TechStack[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [bioData, linksData] = await Promise.all([
+        const [bioData, linksData, skillData, projectData, testimonialData] = await Promise.all([
           fetchBio(),
-          fetchSocialLinks()
+          fetchSocialLinks(),
+          fetchSkills(),
+          fetchProjects(),
+          fetchTestimonials()
         ]);
         setBio(bioData);
         setLinks(linksData);
+        setSkills(skillData);
+        setProjects(projectData);
+        setTestimonials(testimonialData);
       } catch (error) {
         console.error(error);
       } finally {
@@ -43,6 +52,37 @@ export const SystemInfo: React.FC = () => {
     if (p.includes('twitter') || p.includes('x')) return <MessageSquare size={18} />;
     if (p.includes('email') || p.includes('mail')) return <Mail size={18} />;
     return <LinkIcon size={18} />;
+  };
+
+  const normalizeList = (value: unknown): string[] => {
+    if (Array.isArray(value)) return value.flatMap(item => normalizeList(item));
+    if (typeof value !== 'string') return [];
+    const trimmed = value.trim();
+    if (!trimmed) return [];
+
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) return normalizeList(parsed);
+    } catch {
+      // Fallback to comma-separated values from RiRay Hub forms.
+    }
+
+    return trimmed.split(',').map(item => item.trim()).filter(Boolean);
+  };
+
+  const groupedSkills = skills.reduce<Record<string, TechStack[]>>((groups, skill) => {
+    const category = skill.category || 'Tools';
+    groups[category] = [...(groups[category] || []), skill];
+    return groups;
+  }, {});
+
+  const orderedSkillGroups = Object.entries(groupedSkills).sort(([a], [b]) => a.localeCompare(b));
+
+  const getProjectsUsingSkill = (skillName: string) => {
+    const target = skillName.toLowerCase();
+    return projects.filter(project => (
+      normalizeList(project.tech_stack).some(tech => tech.toLowerCase() === target)
+    ));
   };
 
   return (
@@ -105,6 +145,82 @@ export const SystemInfo: React.FC = () => {
             ))}
           </div>
         </div>
+
+        {/* Skills Matrix */}
+        {skills.length > 0 && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 px-1">
+              <Layers3 size={18} className="accent-text" />
+              <h2 className="text-sm font-bold uppercase tracking-widest text-slate-400">Skills Matrix</h2>
+            </div>
+
+            <div className="space-y-6">
+              {orderedSkillGroups.map(([category, categorySkills]) => (
+                <section key={category} className="rounded-2xl border border-slate-200/50 bg-white/50 p-5 shadow-sm backdrop-blur-sm dark:border-slate-700/50 dark:bg-slate-800/50">
+                  <h3 className="mb-4 text-xs font-black uppercase tracking-widest accent-text">{category}</h3>
+                  <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                    {categorySkills.map(skill => {
+                      const relatedProjects = getProjectsUsingSkill(skill.name);
+                      const proficiency = Math.min(100, Math.max(0, Number(skill.proficiency) || 0));
+
+                      return (
+                        <div key={skill.$id} className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-900/70">
+                          <div className="mb-2 flex items-center justify-between gap-3">
+                            <div>
+                              <div className="font-bold text-slate-800 dark:text-slate-100">{skill.name}</div>
+                              {relatedProjects.length > 0 && (
+                                <div className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+                                  Used in {relatedProjects.slice(0, 2).map(project => project.title).join(', ')}
+                                  {relatedProjects.length > 2 ? ` +${relatedProjects.length - 2}` : ''}
+                                </div>
+                              )}
+                            </div>
+                            <span className="rounded-md accent-soft-bg px-2 py-1 text-xs font-black accent-text">{proficiency}%</span>
+                          </div>
+                          <div className="h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
+                            <div className="h-full accent-bg" style={{ width: `${proficiency}%` }} />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </section>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Testimonials */}
+        {testimonials.length > 0 && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 px-1">
+              <Quote size={18} className="accent-text" />
+              <h2 className="text-sm font-bold uppercase tracking-widest text-slate-400">Testimonials</h2>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {testimonials.map(testimonial => (
+                <article key={testimonial.$id} className="rounded-2xl border border-slate-200/50 bg-white/60 p-5 shadow-sm backdrop-blur-sm dark:border-slate-700/50 dark:bg-slate-800/60">
+                  <Quote size={22} className="mb-3 accent-text" />
+                  <p className="text-sm leading-7 text-slate-700 dark:text-slate-300">"{testimonial.content}"</p>
+                  <div className="mt-5 flex items-center gap-3 border-t border-slate-200 pt-4 dark:border-slate-700">
+                    {testimonial.author_image ? (
+                      <img src={testimonial.author_image} alt={testimonial.author_name} className="h-11 w-11 rounded-xl object-cover" />
+                    ) : (
+                      <div className="flex h-11 w-11 items-center justify-center rounded-xl accent-soft-bg text-sm font-black accent-text">
+                        {testimonial.author_name?.charAt(0) || 'T'}
+                      </div>
+                    )}
+                    <div className="min-w-0">
+                      <div className="truncate text-sm font-black text-slate-800 dark:text-slate-100">{testimonial.author_name}</div>
+                      <div className="truncate text-xs text-slate-500 dark:text-slate-400">{testimonial.author_role}</div>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        )}
         
       </div>
     </div>

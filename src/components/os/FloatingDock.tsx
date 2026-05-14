@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useWindowStore } from '../../store/useWindowStore';
 import type { AppId } from '../../store/useWindowStore';
-import { User, Folder, Terminal, ShoppingBag, Globe, Settings as SettingsIcon, Briefcase, GitCommit, Mail, Image, FileText } from 'lucide-react';
+import { User, Folder, Terminal, ShoppingBag, Globe, Settings as SettingsIcon, Briefcase, GitCommit, Mail, Image, FileText, FolderKanban } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { fetchProjects } from '../../lib/api';
+import type { Project } from '../../types';
+import { dispatchOpenProject, DOCK_PROJECT_IDS_KEY, PROJECT_SHORTCUTS_EVENT, readStoredProjectIds } from '../../lib/projectShortcuts';
 
 const apps: { id: AppId; name: string; icon: React.ReactNode; color: string }[] = [
   { id: 'system-info', name: 'About PC', icon: <User size={24} className="text-white" />, color: 'bg-indigo-500' },
@@ -23,9 +26,43 @@ export const FloatingDock: React.FC = () => {
   const openWindow = useWindowStore(state => state.openWindow);
   const windows = useWindowStore(state => state.windows);
   const dockSize = useWindowStore(state => state.dockSize);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [dockProjectIds, setDockProjectIds] = useState<string[]>(() => readStoredProjectIds(DOCK_PROJECT_IDS_KEY));
   const iconSizeClass = dockSize === 'compact' ? 'w-10 h-10' : dockSize === 'large' ? 'w-14 h-14' : 'w-12 h-12';
   const iconPixelSize = dockSize === 'compact' ? 20 : dockSize === 'large' ? 28 : 24;
   const dockPaddingClass = dockSize === 'compact' ? 'px-3 py-2 space-x-3' : dockSize === 'large' ? 'px-5 py-4 space-x-5' : 'px-4 py-3 space-x-4';
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadProjects = async () => {
+      const data = await fetchProjects();
+      if (isMounted) setProjects(data);
+    };
+
+    void loadProjects();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    const syncDockProjects = () => setDockProjectIds(readStoredProjectIds(DOCK_PROJECT_IDS_KEY));
+
+    window.addEventListener('storage', syncDockProjects);
+    window.addEventListener(PROJECT_SHORTCUTS_EVENT, syncDockProjects);
+    return () => {
+      window.removeEventListener('storage', syncDockProjects);
+      window.removeEventListener(PROJECT_SHORTCUTS_EVENT, syncDockProjects);
+    };
+  }, []);
+
+  const pinnedProjects = useMemo(() => (
+    dockProjectIds
+      .map(id => projects.find(project => project.$id === id))
+      .filter((project): project is Project => Boolean(project))
+  ), [dockProjectIds, projects]);
 
   return (
     <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[100]">
@@ -67,6 +104,31 @@ export const FloatingDock: React.FC = () => {
             </div>
           );
         })}
+        {pinnedProjects.length > 0 && (
+          <div className="mx-1 h-8 w-px bg-white/40 dark:bg-white/15" />
+        )}
+        {pinnedProjects.map(project => (
+          <div key={project.$id} className="relative group">
+            <motion.button
+              whileHover={{ scale: 1.15, y: -10 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                openWindow('ri-files', 'RI-Files');
+                window.setTimeout(() => dispatchOpenProject(project.$id), 80);
+              }}
+              aria-label={project.title}
+              className={cn(
+                "rounded-xl flex items-center justify-center shadow-lg transition-all duration-200 accent-bg",
+                iconSizeClass
+              )}
+            >
+              <FolderKanban size={iconPixelSize} className="text-white" />
+            </motion.button>
+            <div className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1 bg-slate-800/90 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap backdrop-blur-md">
+              {project.title}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

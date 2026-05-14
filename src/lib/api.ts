@@ -1,6 +1,6 @@
 import { Query } from 'appwrite';
 import { databases, storage, DATABASE_ID, PROJECTS_COLLECTION_ID, PROJECT_IMAGES_BUCKET_ID, COLLECTION_CV_EXPORTS_ID } from './appwrite';
-import type { Bio, Project, TechStack, Service, SocialLink, Experience, Article, ChangelogEntry, Roadmap, GalleryItem, CVExport } from '../types';
+import type { Bio, Project, TechStack, Service, SocialLink, Experience, Article, ChangelogEntry, Roadmap, GalleryItem, CVExport, Testimonial } from '../types';
 
 export interface ProjectImageAsset {
   id: string;
@@ -101,6 +101,19 @@ export const fetchServices = async (): Promise<Service[]> => {
     return (response.documents as unknown) as Service[];
   } catch (error) {
     console.error('Failed to fetch services:', error);
+    return [];
+  }
+};
+
+export const fetchTestimonials = async (): Promise<Testimonial[]> => {
+  try {
+    const response = await databases.listDocuments(DATABASE_ID, 'public_testimonials', [
+      Query.orderDesc('$createdAt'),
+      Query.limit(50)
+    ]);
+    return (response.documents as unknown) as Testimonial[];
+  } catch (error) {
+    console.error('Failed to fetch testimonials:', error);
     return [];
   }
 };
