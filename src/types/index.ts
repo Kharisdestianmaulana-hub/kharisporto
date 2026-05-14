@@ -47,6 +47,10 @@ export interface Project {
   visibility: boolean;
   content_body: string;
   cover_image_id: string;
+  image_ids?: string[];
+  cover_image_url?: string;
+  image_url?: string;
+  image_urls?: string[];
   $createdAt: string;
 }
 

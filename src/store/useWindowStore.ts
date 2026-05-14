@@ -1,6 +1,9 @@
 import { create } from 'zustand';
 
-export type AppId = 'system-info' | 'ri-files' | 'terminal' | 'app-store' | 'browser' | 'settings' | 'experience' | 'os-info' | 'changelogs';
+export type AppId = 'system-info' | 'ri-files' | 'terminal' | 'app-store' | 'browser' | 'settings' | 'experience' | 'os-info' | 'changelogs' | 'contacts' | 'gallery';
+export type ThemeMode = 'dark' | 'light';
+export type AccentColor = 'blue' | 'emerald' | 'fuchsia' | 'orange' | 'rose';
+export type DockSize = 'compact' | 'comfortable' | 'large';
 
 export interface WindowState {
   id: string;
@@ -18,8 +21,17 @@ interface WindowStore {
   windows: WindowState[];
   activeZIndex: number;
   wallpaper: string;
+  theme: ThemeMode;
+  accentColor: AccentColor;
+  reduceMotion: boolean;
+  dockSize: DockSize;
   isSpotlightOpen: boolean;
   setWallpaper: (url: string) => void;
+  setTheme: (theme: ThemeMode) => void;
+  setAccentColor: (color: AccentColor) => void;
+  setReduceMotion: (enabled: boolean) => void;
+  setDockSize: (size: DockSize) => void;
+  resetBootScreen: () => void;
   toggleSpotlight: () => void;
   closeSpotlight: () => void;
   openWindow: (appId: AppId, title: string, defaultSize?: { width: number | string, height: number | string }) => void;
@@ -38,11 +50,39 @@ export const useWindowStore = create<WindowStore>((set, get) => ({
   windows: [],
   activeZIndex: INITIAL_Z_INDEX,
   wallpaper: localStorage.getItem('shiftos_wallpaper') || '/wallpapers/1.jpg',
+  theme: (localStorage.getItem('shiftos_theme') as ThemeMode) || 'dark',
+  accentColor: (localStorage.getItem('shiftos_accent') as AccentColor) || 'blue',
+  reduceMotion: localStorage.getItem('shiftos_reduce_motion') === 'true',
+  dockSize: (localStorage.getItem('shiftos_dock_size') as DockSize) || 'comfortable',
   isSpotlightOpen: false,
   
   setWallpaper: (url: string) => {
     localStorage.setItem('shiftos_wallpaper', url);
     set({ wallpaper: url });
+  },
+
+  setTheme: (theme) => {
+    localStorage.setItem('shiftos_theme', theme);
+    set({ theme });
+  },
+
+  setAccentColor: (accentColor) => {
+    localStorage.setItem('shiftos_accent', accentColor);
+    set({ accentColor });
+  },
+
+  setReduceMotion: (reduceMotion) => {
+    localStorage.setItem('shiftos_reduce_motion', String(reduceMotion));
+    set({ reduceMotion });
+  },
+
+  setDockSize: (dockSize) => {
+    localStorage.setItem('shiftos_dock_size', dockSize);
+    set({ dockSize });
+  },
+
+  resetBootScreen: () => {
+    sessionStorage.removeItem('hasBooted');
   },
   
   toggleSpotlight: () => set((state) => ({ isSpotlightOpen: !state.isSpotlightOpen })),

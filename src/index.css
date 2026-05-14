@@ -8,11 +8,26 @@
     --glass-bg-dark: rgba(15, 23, 42, 0.75);
     --glass-border-light: rgba(255, 255, 255, 0.4);
     --glass-border-dark: rgba(255, 255, 255, 0.1);
+    --accent-blue: #3b82f6;
+    --accent-emerald: #10b981;
+    --accent-fuchsia: #d946ef;
+    --accent-orange: #f97316;
+    --accent-rose: #f43f5e;
+    --shift-accent: var(--accent-blue);
   }
 
   body {
     @apply bg-os-light dark:bg-os-dark text-slate-800 dark:text-slate-200 overflow-hidden select-none font-sans transition-colors duration-300;
   }
+}
+
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  scroll-behavior: auto !important;
+  transition-duration: 0.001ms !important;
 }
 
 @layer components {
@@ -22,6 +37,14 @@
   
   .glass-panel-heavy {
     @apply bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl border border-white/50 dark:border-white/20;
+  }
+
+  .topbar-glass {
+    @apply bg-white/35 dark:bg-slate-950/35 backdrop-blur-2xl border-b border-white/30 dark:border-white/10 shadow-[0_1px_18px_rgba(15,23,42,0.12)] dark:shadow-[0_1px_24px_rgba(0,0,0,0.35)];
+  }
+
+  .dock-glass {
+    @apply bg-white/35 dark:bg-slate-950/35 backdrop-blur-2xl border border-white/40 dark:border-white/15 shadow-[0_18px_45px_rgba(15,23,42,0.22)] dark:shadow-[0_18px_55px_rgba(0,0,0,0.45)];
   }
   
   .window-shadow {

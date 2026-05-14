@@ -1,10 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BootScreen } from './components/os/BootScreen';
 import { TopBar } from './components/os/TopBar';
 import { FloatingDock } from './components/os/FloatingDock';
 import { WindowContainer } from './components/os/WindowContainer';
 import { Spotlight } from './components/os/Spotlight';
-import { MusicWidget } from './components/os/MusicWidget';
 import { RoadmapWidget } from './components/os/RoadmapWidget';
 import { useWindowStore } from './store/useWindowStore';
 import { AnimatePresence } from 'framer-motion';
@@ -13,7 +12,13 @@ function App() {
   const [hasBooted, setHasBooted] = useState(() => {
     return sessionStorage.getItem('hasBooted') === 'true';
   });
-  const { wallpaper } = useWindowStore();
+  const { wallpaper, theme, accentColor, reduceMotion } = useWindowStore();
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+    document.documentElement.classList.toggle('reduce-motion', reduceMotion);
+    document.documentElement.style.setProperty('--shift-accent', `var(--accent-${accentColor})`);
+  }, [theme, accentColor, reduceMotion]);
 
   const handleBootComplete = () => {
     setHasBooted(true);
@@ -39,7 +44,6 @@ function App() {
 
           <FloatingDock />
           <Spotlight />
-          <MusicWidget />
           <RoadmapWidget />
         </>
       )}

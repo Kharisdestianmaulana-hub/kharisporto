@@ -1,6 +1,12 @@
 import { Query } from 'appwrite';
-import { databases, DATABASE_ID, PROJECTS_COLLECTION_ID } from './appwrite';
-import type { Bio, Project, TechStack, Service, SocialLink, Experience, Article, ChangelogEntry, Roadmap } from '../types';
+import { databases, storage, DATABASE_ID, PROJECTS_COLLECTION_ID, PROJECT_IMAGES_BUCKET_ID } from './appwrite';
+import type { Bio, Project, TechStack, Service, SocialLink, Experience, Article, ChangelogEntry, Roadmap, GalleryItem } from '../types';
+
+export interface ProjectImageAsset {
+  id: string;
+  name: string;
+  url: string | null;
+}
 
 export const fetchBio = async (): Promise<Bio | null> => {
   try {
@@ -22,6 +28,55 @@ export const fetchProjects = async (): Promise<Project[]> => {
     console.error('Failed to fetch projects:', error);
     return [];
   }
+};
+
+export const getProjectImageUrl = (project: Project): string | null => {
+  const directUrl = project.cover_image_url || project.image_url;
+  if (directUrl) return directUrl;
+  if (!project.cover_image_id) return null;
+  return getProjectImageUrlByValue(project.cover_image_id);
+};
+
+const getProjectImageUrlByValue = (value: string): string | null => {
+  if (!value) return null;
+  if (value.startsWith('http') || value.startsWith('/')) return value;
+  if (!PROJECT_IMAGES_BUCKET_ID) return null;
+  return storage.getFileView(PROJECT_IMAGES_BUCKET_ID, value).toString();
+};
+
+const collectStringArray = (value: unknown): string[] => {
+  if (Array.isArray(value)) {
+    return value.filter((item): item is string => typeof item === 'string' && item.trim().length > 0);
+  }
+
+  if (typeof value === 'string' && value.trim()) {
+    try {
+      const parsed = JSON.parse(value);
+      if (Array.isArray(parsed)) return collectStringArray(parsed);
+    } catch {
+      return value.split(',').map(item => item.trim()).filter(Boolean);
+    }
+  }
+
+  return [];
+};
+
+export const getProjectImageFiles = (project: Project): ProjectImageAsset[] => {
+  const imageValues = [
+    project.cover_image_id,
+    ...collectStringArray(project.image_ids),
+    project.cover_image_url,
+    project.image_url,
+    ...collectStringArray(project.image_urls),
+  ].filter((value): value is string => typeof value === 'string' && value.trim().length > 0);
+
+  const uniqueImageValues = Array.from(new Set(imageValues));
+
+  return uniqueImageValues.map((value, index) => ({
+    id: value,
+    name: `${project.title || 'Project'} Image ${index + 1}`,
+    url: getProjectImageUrlByValue(value),
+  }));
 };
 
 export const fetchSkills = async (): Promise<TechStack[]> => {
@@ -59,6 +114,19 @@ export const fetchSocialLinks = async (): Promise<SocialLink[]> => {
     return (response.documents as unknown) as SocialLink[];
   } catch (error) {
     console.error('Failed to fetch social links:', error);
+    return [];
+  }
+};
+
+export const fetchGalleryItems = async (): Promise<GalleryItem[]> => {
+  try {
+    const response = await databases.listDocuments(DATABASE_ID, 'public_gallery', [
+      Query.orderDesc('$createdAt'),
+      Query.limit(100)
+    ]);
+    return (response.documents as unknown) as GalleryItem[];
+  } catch (error) {
+    console.error('Failed to fetch gallery items:', error);
     return [];
   }
 };

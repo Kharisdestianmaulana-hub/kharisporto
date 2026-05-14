@@ -1,7 +1,7 @@
 import React from 'react';
 import { Rnd } from 'react-rnd';
 import { useWindowStore } from '../../store/useWindowStore';
-import type { AppId } from '../../store/useWindowStore';
+import type { AppId, WindowState } from '../../store/useWindowStore';
 import { WindowHeader } from './WindowHeader';
 import { cn } from '../../lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -16,6 +16,24 @@ import { Settings } from '../apps/Settings';
 import { ExperienceApp } from '../apps/ExperienceApp';
 import { OSInfo } from '../apps/OSInfo';
 import { ChangelogsApp } from '../apps/ChangelogsApp';
+import { ContactApp } from '../apps/ContactApp';
+import { GalleryApp } from '../apps/GalleryApp';
+
+const DEFAULT_MIN_SIZE = { width: 520, height: 380 };
+
+const appMinSizes: Partial<Record<AppId, { width: number; height: number }>> = {
+  'system-info': { width: 520, height: 420 },
+  'ri-files': { width: 680, height: 460 },
+  terminal: { width: 560, height: 360 },
+  'app-store': { width: 720, height: 520 },
+  browser: { width: 720, height: 480 },
+  settings: { width: 760, height: 520 },
+  experience: { width: 720, height: 520 },
+  'os-info': { width: 380, height: 460 },
+  changelogs: { width: 700, height: 500 },
+  contacts: { width: 680, height: 480 },
+  gallery: { width: 720, height: 520 },
+};
 
 export const WindowContainer: React.FC = () => {
   const { windows, activeZIndex, bringToFront, updatePosition, updateSize, maximizeWindow } = useWindowStore();
@@ -31,6 +49,8 @@ export const WindowContainer: React.FC = () => {
       case 'experience': return <ExperienceApp />;
       case 'os-info': return <OSInfo />;
       case 'changelogs': return <ChangelogsApp />;
+      case 'contacts': return <ContactApp />;
+      case 'gallery': return <GalleryApp />;
       default: return <div className="flex items-center justify-center h-full text-slate-500">App not found</div>;
     }
   };
@@ -38,10 +58,11 @@ export const WindowContainer: React.FC = () => {
   return (
     <div className="absolute inset-0 pointer-events-none">
       <AnimatePresence>
-        {windows.map((window: any) => {
+        {windows.map((window: WindowState) => {
           if (window.isMinimized) return null;
           
           const isActive = window.zIndex === activeZIndex;
+          const minSize = appMinSizes[window.appId] || DEFAULT_MIN_SIZE;
           
           return (
             <Rnd
@@ -53,8 +74,8 @@ export const WindowContainer: React.FC = () => {
                 updateSize(window.id, { width: ref.style.width, height: ref.style.height });
                 updatePosition(window.id, position);
               }}
-              minWidth={300}
-              minHeight={200}
+              minWidth={minSize.width}
+              minHeight={minSize.height}
               bounds={window.isMaximized ? undefined : "parent"}
               dragHandleClassName="window-drag-handle"
               disableDragging={window.isMaximized}

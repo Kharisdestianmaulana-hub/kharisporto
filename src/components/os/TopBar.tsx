@@ -1,14 +1,30 @@
 import React, { useState, useEffect } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { Battery, BatteryCharging, Wifi, Search, Moon, Sun } from 'lucide-react';
 import { useWindowStore } from '../../store/useWindowStore';
+import { WidgetsOverlay } from './WidgetsOverlay';
+
+interface BrowserBatteryManager extends EventTarget {
+  level: number;
+  charging: boolean;
+}
+
+interface BatteryNavigator extends Navigator {
+  getBattery?: () => Promise<BrowserBatteryManager>;
+}
 
 export const TopBar: React.FC = () => {
   const [time, setTime] = useState(new Date());
-  const [isDark, setIsDark] = useState(true);
   const [batteryLevel, setBatteryLevel] = useState<number | null>(null);
   const [isCharging, setIsCharging] = useState(false);
+  const [isWidgetsOpen, setIsWidgetsOpen] = useState(false);
   
-  const { toggleSpotlight, openWindow } = useWindowStore();
+  const { toggleSpotlight, openWindow, theme, setTheme } = useWindowStore();
+  const dateTimeLabel = `${time.toLocaleDateString('en-GB', {
+    weekday: 'short',
+    day: '2-digit',
+    month: 'short',
+  }).replace(',', '')} ${time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -16,40 +32,37 @@ export const TopBar: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    let batteryManager: any = null;
+    let batteryManager: BrowserBatteryManager | null = null;
+    let handleBatteryChange: (() => void) | null = null;
 
-    const updateBattery = (b: any) => {
+    const updateBattery = (b: BrowserBatteryManager) => {
       setBatteryLevel(Math.round(b.level * 100));
       setIsCharging(b.charging);
     };
 
-    if ('getBattery' in navigator) {
-      (navigator as any).getBattery().then((b: any) => {
+    const batteryNavigator = navigator as BatteryNavigator;
+    if (batteryNavigator.getBattery) {
+      batteryNavigator.getBattery().then((b) => {
         batteryManager = b;
         updateBattery(b);
-        b.addEventListener('levelchange', () => updateBattery(b));
-        b.addEventListener('chargingchange', () => updateBattery(b));
+        handleBatteryChange = () => updateBattery(b);
+        b.addEventListener('levelchange', handleBatteryChange);
+        b.addEventListener('chargingchange', handleBatteryChange);
       });
     }
 
     return () => {
-      if (batteryManager) {
-        batteryManager.removeEventListener('levelchange', () => updateBattery(batteryManager));
-        batteryManager.removeEventListener('chargingchange', () => updateBattery(batteryManager));
+      if (batteryManager && handleBatteryChange) {
+        batteryManager.removeEventListener('levelchange', handleBatteryChange);
+        batteryManager.removeEventListener('chargingchange', handleBatteryChange);
       }
     };
   }, []);
 
-  useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [isDark]);
-
   return (
-    <div className="h-8 w-full glass-panel-heavy fixed top-0 z-[100] flex items-center justify-between px-4 text-xs font-medium">
+    <>
+    <div className="h-8 w-full topbar-glass fixed top-0 z-[100] flex items-center justify-between px-4 text-xs font-medium">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/70 dark:bg-white/20" />
       <div className="flex items-center space-x-4">
         <span onClick={() => openWindow('os-info', 'About Shift OS', { width: 400, height: 500 })} className="font-bold text-sm tracking-wide cursor-pointer hover:opacity-80 transition-opacity">Shift OS</span>
         <span onClick={() => openWindow('ri-files', 'RI-Files')} className="hidden sm:inline hover:bg-slate-200 dark:hover:bg-slate-700 px-2 py-1 rounded cursor-pointer transition-colors">File</span>
@@ -60,10 +73,10 @@ export const TopBar: React.FC = () => {
 
       <div className="flex items-center space-x-4">
         <button 
-          onClick={() => setIsDark(!isDark)}
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
           className="hover:bg-slate-200 dark:hover:bg-slate-700 p-1 rounded transition-colors"
         >
-          {isDark ? <Sun size={14} /> : <Moon size={14} />}
+          {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
         </button>
         <Wifi size={14} />
         <div className="flex items-center space-x-1">
@@ -73,10 +86,17 @@ export const TopBar: React.FC = () => {
         <button onClick={toggleSpotlight} className="hover:bg-slate-200 dark:hover:bg-slate-700 p-1 rounded transition-colors">
           <Search size={14} />
         </button>
-        <span className="font-semibold">
-          {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-        </span>
+        <button
+          onClick={() => setIsWidgetsOpen((open) => !open)}
+          className="font-semibold whitespace-nowrap hover:bg-slate-200 dark:hover:bg-slate-700 px-2 py-1 rounded transition-colors"
+        >
+          {dateTimeLabel}
+        </button>
       </div>
     </div>
+    <AnimatePresence>
+      {isWidgetsOpen && <WidgetsOverlay time={time} onClose={() => setIsWidgetsOpen(false)} />}
+    </AnimatePresence>
+    </>
   );
 };

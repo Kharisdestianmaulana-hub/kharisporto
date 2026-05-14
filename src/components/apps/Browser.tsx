@@ -23,24 +23,20 @@ export const Browser: React.FC = () => {
     loadArticles();
   }, []);
 
-  // Update URL bar based on view
-  useEffect(() => {
-    if (currentArticle) {
-      // Create a slug-like URL for the article
-      const slug = currentArticle.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-      setInputUrl(`riray.hub/article/${slug}`);
-    } else {
-      setInputUrl('riray.hub/articles');
-    }
-  }, [currentArticle]);
+  const getArticleUrl = (article: Article) => {
+    const slug = article.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    return `riray.hub/article/${slug}`;
+  };
 
   const handleHome = () => {
     setCurrentArticle(null);
+    setInputUrl('riray.hub/articles');
   };
 
   const handleBack = () => {
     if (currentArticle) {
       setCurrentArticle(null);
+      setInputUrl('riray.hub/articles');
     }
   };
 
@@ -49,7 +45,13 @@ export const Browser: React.FC = () => {
     // For now, form submit just resets if they type something else
     if (inputUrl === 'riray.hub/articles' || inputUrl === 'riray.hub') {
       setCurrentArticle(null);
+      setInputUrl('riray.hub/articles');
     }
+  };
+
+  const openArticle = (article: Article) => {
+    setCurrentArticle(article);
+    setInputUrl(getArticleUrl(article));
   };
 
   const parseTags = (tagsStr: string) => {
@@ -60,8 +62,8 @@ export const Browser: React.FC = () => {
   return (
     <div className="h-full flex flex-col bg-slate-50 dark:bg-slate-900">
       {/* Browser Navigation Bar */}
-      <div className="h-12 border-b border-slate-200 dark:border-slate-800 flex items-center px-4 bg-slate-100 dark:bg-slate-950 shrink-0 space-x-4">
-        <div className="flex items-center space-x-2 text-slate-500">
+      <div className="h-12 border-b border-slate-200 dark:border-slate-800 flex items-center gap-4 px-4 bg-slate-100 dark:bg-slate-950 shrink-0">
+        <div className="flex shrink-0 items-center space-x-2 text-slate-500">
           <button 
             onClick={handleBack}
             disabled={!currentArticle}
@@ -74,8 +76,8 @@ export const Browser: React.FC = () => {
           <button onClick={handleHome} className="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"><Home size={16} /></button>
         </div>
         
-        <form onSubmit={handleSubmit} className="flex-1 max-w-2xl mx-auto md:mx-0">
-          <div className="relative flex items-center">
+        <form onSubmit={handleSubmit} className="min-w-0 flex-1">
+          <div className="relative flex w-full items-center">
             <Globe size={14} className="absolute left-3 text-slate-400" />
             <input 
               type="text" 
@@ -110,7 +112,7 @@ export const Browser: React.FC = () => {
                 {articles.map(article => (
                   <div 
                     key={article.$id} 
-                    onClick={() => setCurrentArticle(article)}
+                    onClick={() => openArticle(article)}
                     className="group flex flex-col bg-white dark:bg-slate-800 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer"
                   >
                     {/* Cover Image */}

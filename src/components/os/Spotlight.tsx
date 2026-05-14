@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useWindowStore } from '../../store/useWindowStore';
 import type { AppId } from '../../store/useWindowStore';
-import { Search, Folder, User, Terminal, ShoppingBag, Globe, Settings as SettingsIcon, Briefcase, GitCommit } from 'lucide-react';
+import { Search, Folder, User, Terminal, ShoppingBag, Globe, Settings as SettingsIcon, Briefcase, GitCommit, Mail, Image } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 interface SearchResult {
@@ -19,6 +19,8 @@ const apps: SearchResult[] = [
   { id: 'app-store', name: 'App Store', icon: <ShoppingBag size={20} className="text-white" />, color: 'bg-emerald-500' },
   { id: 'experience', name: 'Experience', icon: <Briefcase size={20} className="text-white" />, color: 'bg-orange-500' },
   { id: 'changelogs', name: 'Changelogs', icon: <GitCommit size={20} className="text-white" />, color: 'bg-purple-600' },
+  { id: 'gallery', name: 'Gallery', icon: <Image size={20} className="text-white" />, color: 'bg-fuchsia-500' },
+  { id: 'contacts', name: 'Contacts', icon: <Mail size={20} className="text-white" />, color: 'bg-cyan-500' },
   { id: 'browser', name: 'Browser', icon: <Globe size={20} className="text-white" />, color: 'bg-rose-500' },
   { id: 'settings', name: 'Settings', icon: <SettingsIcon size={20} className="text-white" />, color: 'bg-slate-500' },
 ];
